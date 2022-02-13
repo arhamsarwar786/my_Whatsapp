@@ -42,6 +42,9 @@ dependencies:
   cloud_firestore: 
   intl:
   url_launcher:
+  internet_connection_checker: ^0.0.1+3
+  firebase_messaging:
+  flutter_local_notifications:
   # social_media_recorder: 
 
 dev_dependencies:

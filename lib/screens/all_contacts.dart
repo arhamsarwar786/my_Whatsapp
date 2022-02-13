@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:my_whatsapp/Controller/GlobalState.dart';
+import 'package:my_whatsapp/Controller/global_state.dart';
 import 'package:my_whatsapp/config/config.dart';
-import 'package:my_whatsapp/screens/ChatScreen.dart';
+import 'package:my_whatsapp/screens/chat_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 

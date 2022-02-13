@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_whatsapp/Controller/GlobalState.dart';
+import 'package:my_whatsapp/Controller/global_state.dart';
 import 'package:my_whatsapp/main.dart';
 
 

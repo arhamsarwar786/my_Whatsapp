@@ -4,19 +4,49 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:my_whatsapp/Controller/global_methods.dart';
 import 'package:my_whatsapp/config/config.dart';
 import 'package:my_whatsapp/screens/all_contacts.dart';
 import 'package:my_whatsapp/screens/register.dart';
-import 'package:my_whatsapp/tabs/ChatsTab.dart';
-
-import 'Controller/GlobalState.dart';
+import 'package:my_whatsapp/tabs/chats_tab.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'Controller/global_state.dart';
 
 
 // import 'package:contacts_service/contacts_service.dart';
 
-void main() async {
+
+
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    // 'This channel is used for important notifications.', // description
+    importance: Importance.high,
+    playSound: true);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('A bg message just showed up :  ${message.messageId}');
+}
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
    await Firebase.initializeApp();  
+   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
   runApp(App());
 }
 
@@ -62,6 +92,52 @@ checkStatusOnline(){
   void initState() {    
     super.initState();
     checkStatusOnline();
+
+    if(GlobalState.dataListen == null){
+      fetchAllMessages();
+    }
+
+     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification!;
+      AndroidNotification android = message.notification!.android!;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                // channel.description!,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+              ),
+            ));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      RemoteNotification notification = message.notification!;
+      AndroidNotification android = message.notification!.android!;
+      if (notification != null && android != null) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text(notification.title!),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [Text(notification.body!)],
+                  ),
+                ),
+              );
+            });
+      }
+    });
   }
 
   @override
@@ -94,12 +170,27 @@ checkStatusOnline(){
         actions: [
           IconButton(
             onPressed: () {
-              checkStatusOnline();
+              // checkStatusOnline();
+  flutterLocalNotificationsPlugin.show(
+        0,
+        "Testing with Arham",
+        "How you doin ?",
+        NotificationDetails(
+            android: AndroidNotificationDetails(channel.id, channel.name,
+                importance: Importance.high,
+                color: Colors.blue,
+                playSound: true,
+                icon: '@mipmap/ic_launcher')));
             },
             icon: Icon(Icons.search),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // setState(() {
+              // });
+                
+           fetchContactsAndCheckStatus();
+            },
             icon: Icon(Icons.more_vert),
           ),
         ],
