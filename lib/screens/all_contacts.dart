@@ -195,7 +195,7 @@ class _ContactsState extends State<Contacts> {
                             onTap: () {
                               if (dbSavedUsers.contains(
                                   contacts[i].phones[0].normalizedNumber)) {
-                                    FirebaseFirestore.instance.collection("chats").doc("${contacts[i].phones[0].normalizedNumber}").collection("personalChats").doc("${contacts[i].phones[0].normalizedNumber}").set({
+                                    FirebaseFirestore.instance.collection("chats").doc("${contacts[i].phones[0].normalizedNumber}").collection("personalChats").doc("${GlobalState.myNumber}").set({
                                       "name": "${GlobalState.name}",
                                       "number":"${GlobalState.myNumber}",
                                       "seenTime":DateTime.now(),

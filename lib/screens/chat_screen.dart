@@ -9,10 +9,11 @@ import 'package:my_whatsapp/Controller/global_methods.dart';
 import 'package:my_whatsapp/Controller/global_state.dart';
 import 'package:my_whatsapp/config/config.dart';
 import 'package:my_whatsapp/main.dart';
+import 'package:my_whatsapp/models/selected_messages.dart';
 import 'info_message.dart';
 
 class ChatScreen extends StatefulWidget {
-  final  Map info;
+  final Map info;
 
   // ignore: use_key_in_widget_constructors
   const ChatScreen(this.info);
@@ -22,211 +23,201 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  Widget renderChatMessage(QueryDocumentSnapshot queryData) {
-    return Column(
-      children: [
-        Dismissible(
-            key: Key("$queryData"),
-            dragStartBehavior: DragStartBehavior.start,
-            confirmDismiss: (a) async {              
-              // print("^^^^^^^^^^^^^ $a");
-              if (a == DismissDirection.startToEnd) {
-                // print('Selected ${queryData.get('message')}');
-                // print(queryData.id);
-                selectedText = queryData.get('message');
-                focusNode.requestFocus();
-                setState(() {
-                  isSelectedtext = true;
-                });
-                // focusNode.
-              }
-            },
-            onDismissed: (direction) {
-              print(direction);
-            },
-            secondaryBackground: Container(color: Colors.red[100]),
-            background: Container(color: Colors.transparent),
-          child: Align(
-            alignment: queryData.get('isSentByMe')
-                ? Alignment.centerRight
-                : Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 5,
-                vertical: 5,
+  Widget renderChatMessage(QueryDocumentSnapshot queryData, index) {
+    return Dismissible(
+      key: Key("$queryData"),
+      dragStartBehavior: DragStartBehavior.start,
+      confirmDismiss: (a) async {
+        // print("^^^^^^^^^^^^^ $a");
+        if (a == DismissDirection.startToEnd) {
+          // print('Selected ${queryData.get('message')}');
+          // print(queryData.id);
+          selectedText = queryData.get('message');
+          focusNode.requestFocus();
+          setState(() {
+            isSelectedtext = true;
+          });
+          // focusNode.
+        }
+      },
+      onDismissed: (direction) {
+        print(direction);
+      },
+      secondaryBackground: Container(color: Colors.red[100]),
+      background: Container(color: Colors.transparent),
+      child: Align(
+        alignment: queryData.get('isSentByMe')
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 5,
+            vertical: 5,
+          ),
+          margin: EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: queryData.get('isSentByMe') ? 2 : 7,
+          ),
+          decoration: BoxDecoration(
+            color:
+                queryData.get('isSentByMe') ? Color(0xFFDCF8C6) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 2,
+                color: Color(0x22000000),
+                offset: Offset(1, 2),
               ),
-              margin: EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: queryData.get('isSentByMe') ? 2 : 7,
-              ),
-              decoration: BoxDecoration(
-                color: queryData.get('isSentByMe')
-                    ? Color(0xFFDCF8C6)
-                    : Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 2,
-                    color: Color(0x22000000),
-                    offset: Offset(1, 2),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                // mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  !queryData.get("isReplyMessage")
-                      ? Container(
-                          width: 0,
-                        )
-                      : Container(
-                          // alignment: Alignment.centerLeft,
-                          height: 50,
-                          // color: Colors.red,
-                          // width: MediaQuery.of(context).size.width,
+            ],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            // mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              !queryData.get("isReplyMessage")
+                  ? Container(
+                      width: 0,
+                    )
+                  : Container(
+                      // alignment: Alignment.centerLeft,
+                      height: 50,
+                      // color: Colors.red,
+                      // width: MediaQuery.of(context).size.width,
 
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10)),
-                            ),
-                            child: Container(
-                              color: Colors.grey[100],
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 5,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[400],
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10)),
-                                    ),
-                                  ),
-                                  Container(
-                                    // width: MediaQuery.of(context).size.width - 76,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[100],
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
-                                    ),
-                                    child: Container(
-                                      margin: EdgeInsets.only(left: 10),
-                                      child: Column(
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
+                        ),
+                        child: Container(
+                          color: Colors.grey[100],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 5,
+                                decoration: BoxDecoration(
+                                  color: Colors.green[400],
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10)),
+                                ),
+                              ),
+                              Container(
+                                // width: MediaQuery.of(context).size.width - 76,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10)),
+                                ),
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 10),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "you",
-                                                style: TextStyle(
-                                                    color: Colors.green[400],
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ],
-                                          ),
                                           Text(
-                                            queryData.get("repliedMessage"),
-                                            style: TextStyle(fontSize: 12),
+                                            "you",
+                                            style: TextStyle(
+                                                color: Colors.green[400],
+                                                fontWeight: FontWeight.w500),
                                           ),
                                         ],
                                       ),
-                                    ),
+                                      Text(
+                                        queryData.get("repliedMessage"),
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        
                         ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 5,
-                        right: queryData.get('isSentByMe') ? 20 : 10),
-                    child: Text(
-                      queryData.get('message'),
-                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 5,),
-                    // alignment: Alignment.bottomRight,
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          DateFormat('jm')
-                              .format(queryData.get('time').toDate()),
-                          style: TextStyle(fontSize: 10),
-                        ),
-                        queryData.get('isSentByMe')
-                            ? Container(
-                                height: 20,
-                                // color: Colors.amber,
-                                child: Stack(
-                                  alignment: Alignment.topCenter,
-                                  children: [
-                                    Icon(
-                                      Icons.check,
-                                      size: 15,
-                                      color:
-                                          (queryData.get("status") != 'sent') ||
-                                                  (queryData.get("status") ==
-                                                      'deliver')
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 5, right: queryData.get('isSentByMe') ? 20 : 10),
+                child: Text(
+                  queryData.get('message'),
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 5,
+                ),
+                // alignment: Alignment.bottomRight,
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      DateFormat('jm').format(queryData.get('time').toDate()),
+                      style: TextStyle(fontSize: 10),
+                    ),
+                    queryData.get('isSentByMe')
+                        ? Container(
+                            height: 20,
+                            // color: Colors.amber,
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Icon(
+                                  Icons.check,
+                                  size: 15,
+                                  color: (queryData.get("status") != 'sent') ||
+                                          (queryData.get("status") == 'deliver')
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                queryData.get("status") == 'deliver'
+                                    ? Positioned(
+                                        top: 3,
+                                        child: Icon(
+                                          Icons.check,
+                                          size: 15,
+                                          color: queryData.get("status") !=
+                                                      'sent' ||
+                                                  queryData.get("status") ==
+                                                      'deliver'
                                               ? Colors.blue
                                               : Colors.grey,
-                                    ),
-                                    queryData.get("status") == 'deliver'
-                                        ? Positioned(
-                                            top: 3,
-                                            child: Icon(
-                                              Icons.check,
-                                              size: 15,
-                                              color: queryData.get("status") !=
-                                                          'sent' ||
-                                                      queryData.get("status") ==
-                                                          'deliver'
-                                                  ? Colors.blue
-                                                  : Colors.grey,
-                                            ),
-                                          )
-                                        : Container()
-                                    // Positioned(
-                                    //   top: 6,
-                                    //   child: Icon(
-                                    //     Icons.check,
-                                    //     size: 15,
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
-           
-                ],
+                                        ),
+                                      )
+                                    : Container()
+                                // Positioned(
+                                //   top: 6,
+                                //   child: Icon(
+                                //     Icons.check,
+                                //     size: 15,
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -434,6 +425,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                         onPressed: () {
                           if (sendButton) {
+                            // selectedMessages!.add(
+                            //               SelectedMessages<String>(
+                            //                   "${data.docs[i].id}"));
                             FirebaseFirestore.instance
                                 .collection("chats")
                                 .doc(GlobalState.myNumber)
@@ -621,7 +615,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-
+    selectedMessages = [];
     checkStatusOnline();
 
     // FirebaseFirestore.instance.collection("chats").doc(GlobalState.myNumber).update({"statusOnline":true,"lastSeen":DateTime.now()})
@@ -685,7 +679,70 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  List<SelectedMessages<String>>? selectedMessages;
+
   bool isSelectedtext = false;
+  bool isAnySelected = false;
+
+  deleteMessage(BuildContext context, midList) {
+    // set up the buttons
+    Widget remindButton = TextButton(
+      child: Text("Remind me later"),
+      onPressed: () {},
+    );
+    Widget cancelButton = TextButton(
+      child: Text(
+        "CANCEL",
+        style: TextStyle(color: primaryColor),
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget launchButton = TextButton(
+      child: Text(
+        "DELETE FOR ME",
+        style: TextStyle(color: primaryColor),
+      ),
+      onPressed: () {
+        for (var mid in selectedMessages!) {
+            // mid.isSelected = !mid.isSelected;
+        
+        if (mid.isSelected) 
+          firebaseInstance
+              .doc(widget.info['number'])
+              .collection('privateChat')
+              .doc(mid.data)
+              .delete();
+              
+        }
+        selectedMessages!.clear();
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Delete Message"),
+      content: Text("Delete Message from ${widget.info['name']}?"),
+      actions: [
+        // remindButton,
+        cancelButton,
+        launchButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  List midList = [];
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -709,78 +766,101 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       child: Scaffold(
         backgroundColor: Color(0xFFECE5DD),
-        appBar: AppBar(
-          backgroundColor: primaryColor,
-          leading: IconButton(
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection("chats")
-                    .doc("${widget.info["number"]}")
-                    .collection("personalChats")
-                    .doc(GlobalState.myNumber)
-                    .update({
-                  "isSeen": false,
-                });
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => HomePage()));
-              },
-              icon: Icon(Icons.arrow_back_sharp)),
-          title: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.grey,
-                backgroundImage: AssetImage("images/blankProfile.webp"),
+        appBar: isAnySelected
+            ? AppBar(
+                backgroundColor: primaryColor,
+                leading: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedMessages!.clear();
+                        isAnySelected = false;
+                      });
+                    },
+                    icon: Icon(Icons.arrow_back_sharp)),
+
+                // centerTitle: false,
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        deleteMessage(context, midList);
+                      },
+                      icon: Icon(Icons.delete)),
+                ],
+              )
+            : AppBar(
+                backgroundColor: primaryColor,
+                leading: IconButton(
+                    onPressed: () {
+                      FirebaseFirestore.instance
+                          .collection("chats")
+                          .doc("${widget.info["number"]}")
+                          .collection("personalChats")
+                          .doc(GlobalState.myNumber)
+                          .update({
+                        "isSeen": false,
+                      });
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => HomePage()));
+                    },
+                    icon: Icon(Icons.arrow_back_sharp)),
+                title: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      backgroundImage: AssetImage("images/blankProfile.webp"),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    FittedBox(
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.info['name'],
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 10,
+                                  width: 10,
+                                  margin: EdgeInsets.only(
+                                      right: 5, top: 5, bottom: 5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color:
+                                          status ? Colors.green : Colors.red),
+                                ),
+                                Text(
+                                  "${status ? 'Online' : '${lastSeen == null ? 'offline' : DateFormat('d MMM,').add_jm().format(lastSeen.toDate())}'}",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+                // centerTitle: false,
+                actions: <Widget>[
+                  PopupMenuButton(
+                    onSelected: handleClick,
+                    itemBuilder: (BuildContext context) {
+                      return {'info'}.map((String choice) {
+                        return PopupMenuItem(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 10,
-              ),
-              FittedBox(
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.info['name'],
-                        overflow: TextOverflow.fade,
-                        maxLines: 1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 10,
-                            width: 10,
-                            margin:
-                                EdgeInsets.only(right: 5, top: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: status ? Colors.green : Colors.red),
-                          ),
-                          Text(
-                            "${status ? 'Online' : '${lastSeen == null ? 'offline' : DateFormat('d MMM,').add_jm().format(lastSeen.toDate())}'}",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-          // centerTitle: false,
-          actions: <Widget>[
-            PopupMenuButton(
-              onSelected: handleClick,
-              itemBuilder: (BuildContext context) {
-                return {'info'}.map((String choice) {
-                  return PopupMenuItem(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
-          ],
-        ),
         //
         body: StreamBuilder(
             stream: firebaseInstance
@@ -790,28 +870,67 @@ class _ChatScreenState extends State<ChatScreen> {
                 .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
-                QuerySnapshot data = snapshot.data as QuerySnapshot;
-                return Column(
-                  children: [
-                    Flexible(
-                      child: data.docs.isEmpty
-                          ? const Center(
-                              child: Text("No Chat Found"),
-                            )
-                          : ListView.builder(
-                              reverse: true,
-                              itemCount: data.docs.length,
-                              itemBuilder: (ctx, i) =>
-                                  renderChatMessage(data.docs[i]),
-                              // separatorBuilder:(context, index) => dateFetch(messages[index].date),
-                            ),
-                    ),
-                    // Divider(),
-                    Container(
-                      child: renderTextBox(context),
-                    ),
-                  ],
-                );
+                QuerySnapshot? data = snapshot.data;
+                // print(
+                //     "This is the Length : ${data!.docs.length} ${data.docs.isEmpty}");
+                return  Column(
+                        children: [
+                          Flexible(
+                            child: data!.docs.isEmpty
+                    ? const Center(
+                        child: Text("No Chat Found"),
+                      )
+                    : ListView.builder(
+                                reverse: true,
+                                // shrinkWrap: true,
+                                itemCount: data.docs.length,
+                                itemBuilder: (ctx, i) {
+                                  if (selectedMessages!.isEmpty) {
+                                    for (int i = 0; i < data.docs.length; i++) {
+                                      selectedMessages!.add(
+                                          SelectedMessages<String>(
+                                              "${data.docs[i].id}"));
+                                    }
+                                  }
+                                  return GestureDetector(
+                                      onTap: () {
+                                        if (selectedMessages!
+                                            .any((item) => item.isSelected)) {
+                                          setState(() {
+                                            selectedMessages![i].isSelected =
+                                                !selectedMessages![i]
+                                                    .isSelected;
+                                                
+                                          });
+                                        }
+                                      },
+                                      onLongPress: () {
+                                        setState(() {
+                                          selectedMessages![i].isSelected =
+                                              true;
+                                          isAnySelected = true;
+                                       
+                                          // midList.add(data.docs[i].id);
+                                        });
+                                      },
+                                      
+                                      child: Container(
+                                        color: selectedMessages!.isEmpty ? Colors.transparent :  selectedMessages![i].isSelected
+                                            ? Colors.blue[100]
+                                            : Colors.transparent,
+                                        child:
+                                            renderChatMessage(data.docs[i], i),
+                                      ));
+                                }
+                                // separatorBuilder:(context, index) => dateFetch(messages[index].date),
+                                ),
+                          ),
+                          // Divider(),
+                          Container(
+                            child: renderTextBox(context),
+                          ),
+                        ],
+                      );
               }
 
               return Center(

@@ -6,11 +6,13 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:my_whatsapp/Controller/global_methods.dart';
 import 'package:my_whatsapp/config/config.dart';
+import 'package:my_whatsapp/provider/provider.dart';
 import 'package:my_whatsapp/screens/all_contacts.dart';
 import 'package:my_whatsapp/screens/register.dart';
 import 'package:my_whatsapp/tabs/chats_tab.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 import 'Controller/global_state.dart';
 
 
@@ -36,6 +38,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
    await Firebase.initializeApp();  
+   MyProvider provider = MyProvider();
    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await flutterLocalNotificationsPlugin
@@ -47,24 +50,33 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-  runApp(App());
+  runApp(App(provider));
 }
 
 class App extends StatelessWidget {
+  final provider;
+  App(this.provider);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Register(),
-      theme: ThemeData(
-        fontFamily: "PopinRegular",
-        brightness: Brightness.light,
-        primaryColor: primaryColor,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.grey,
-        primaryColor: primaryColor,
+    return ChangeNotifierProvider<MyProvider>(
+      create: (_) => provider,
+      child: Consumer<MyProvider>(
+        builder: (context,provider,child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Register(),
+            theme: ThemeData(
+              fontFamily: "PopinRegular",
+              brightness: Brightness.light,
+              primaryColor: primaryColor,
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primarySwatch: Colors.grey,
+              primaryColor: primaryColor,
+            ),
+          );
+        }
       ),
     );
   }
