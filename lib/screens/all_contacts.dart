@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+// import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:my_whatsapp/Controller/global_state.dart';
 import 'package:my_whatsapp/config/config.dart';
 import 'package:my_whatsapp/screens/chat_screen.dart';
@@ -20,22 +20,22 @@ class _ContactsState extends State<Contacts> {
     fetchContacts();
   }
 
-  List<Contact> contacts = [];
+  List contacts = [];
 
   fetchContacts() async {
-    if (await FlutterContacts.requestPermission()) {
-      contacts = await FlutterContacts.getContacts();
-      contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-      fetchDBUsers();
-      // print(contacts);
-    } else {
-      contacts = await FlutterContacts.getContacts(
-          withProperties: true, withPhoto: true);
-      fetchDBUsers();
-    }
+    // if (await FlutterContacts.requestPermission()) {
+    //   contacts = await FlutterContacts.getContacts();
+    //   contacts = await FlutterContacts.getContacts(
+    //       withProperties: true, withPhoto: true);
+    //   fetchDBUsers();
+    //   // print(contacts);
+    // } else {
+    //   contacts = await FlutterContacts.getContacts(
+    //       withProperties: true, withPhoto: true);
+    //   fetchDBUsers();
+    // }
 
-    setState(() {});
+    // setState(() {});
   }
 
   fetchDBUsers() {

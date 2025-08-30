@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+// import 'package:flutter_contacts/contact.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:my_whatsapp/Controller/global_methods.dart';
 import 'package:my_whatsapp/config/config.dart';
+import 'package:my_whatsapp/firebase_options.dart';
 import 'package:my_whatsapp/provider/provider.dart';
 import 'package:my_whatsapp/screens/all_contacts.dart';
 import 'package:my_whatsapp/screens/register.dart';
@@ -37,7 +37,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   await Firebase.initializeApp();  
+    await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+); 
    MyProvider provider = MyProvider();
    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -50,6 +52,8 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
+
+
   runApp(App(provider));
 }
 
